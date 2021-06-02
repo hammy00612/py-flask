@@ -1,0 +1,56 @@
+version: 2.1  #https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+jobs:
+  run_test_1:
+    docker:
+      - image: circleci/python:3.7.4
+    steps:
+      - run:
+          name: checking what is checkout function
+          command:  |
+            echo what is checkout
+            echo this is before checkout
+            echo "this is pwd:  "; pwd   
+            echo "this is ls:   "; ls
+      - checkout
+      - run:
+          name: testing phase of run_test_1
+          command: |
+            pwd
+            ls
+      - run:
+          name: install python dependencies
+          command: |
+            echo "here is installing python: "
+            echo 'echo PATH=~$PATH:~/.local/bin' >> $BASH_ENV && source $BASH_ENV
+            pip install --user -r requirement.txt
+      - run:
+          name: Run Unit Test
+          command: |
+            echo RUN THE UNIT TEST
+            pytest --junitxml=test-reports/junit.xml --html=test-reports/pytest_report.html --self-contained-html
+      - store_test_results:
+          path: test-reports
+      - store_artifacts:
+          path: test-reports
+  run_test_2:
+    docker:
+      - image: circleci/python:3.7.4
+    steps:
+      - run:
+          name: checking the run_test_2
+          command: |
+            echo command of checking the run_test_2
+
+      - run:
+          name: getting output of post test
+          command: |
+              echo this is getting output as post test
+              echo $(ls) > /tmp/log.txt
+              cat /tmp/log.txt
+      - store_test_results:
+          path: /tmp/log.txt
+workflows:
+  my_workflowfor_cicd:      # <workflow_name>
+    jobs:
+      - run_test_1
+      - run_test_2
