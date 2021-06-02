@@ -49,6 +49,9 @@ jobs:
               cat /tmp/log.txt
       - store_test_results:
           path: /tmp/log.txt
+      - store_artifacts:
+          path: /tmp/log.txt
+
 workflows:
   my_workflowfor_cicd:      # <workflow_name>
     jobs:
